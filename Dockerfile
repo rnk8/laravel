@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 # 2. Configura Apache correctamente
 RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     a2enmod rewrite && \
-    sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
     sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
 # 3. Configura Composer
@@ -31,15 +31,11 @@ COPY . .
 RUN chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
-# 9. Prepara la aplicación
-RUN if [ ! -f .env ]; then \
-        cp .env.example .env && \
-        php artisan key:generate; \
-    fi && \
-    php artisan config:clear && \
+# 9. Prepara la aplicación (NO genera .env automáticamente)
+RUN php artisan config:clear && \
     php artisan cache:clear
 
-# 10. Comando de inicio
-CMD ["bash", "-c", "php artisan migrate --force && php artisan config:cache && php artisan view:cache && apache2-foreground"]
+# 10. Comando de inicio optimizado
+CMD ["bash", "-c", "php artisan migrate --force; php artisan config:cache; php artisan view:cache; apache2-foreground"]
 
 EXPOSE 80

@@ -1,3 +1,22 @@
+# Stage 1: Build assets with Node.js
+FROM node:20 AS build
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy Vite config and assets
+COPY vite.config.js ./
+COPY resources/ ./resources/
+
+# Build production assets
+RUN npm run build
+
+# Stage 2: Production image
 FROM php:8.2-apache
 
 # 1. Instala dependencias del sistema
@@ -27,15 +46,18 @@ RUN composer install --no-interaction --optimize-autoloader --no-scripts
 # 7. Copia toda la aplicación
 COPY . .
 
-# 8. Configura permisos
-RUN chown -R www-data:www-data storage bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache
+# 8. Copia los assets compilados desde la etapa de construcción
+COPY --from=build /app/public/build /var/www/html/public/build
 
-# 9. Prepara la aplicación (NO genera .env automáticamente)
+# 9. Configura permisos
+RUN chown -R www-data:www-data storage bootstrap/cache public/build && \
+    chmod -R 775 storage bootstrap/cache public/build
+
+# 10. Prepara la aplicación
 RUN php artisan config:clear && \
     php artisan cache:clear
 
-# 10. Comando de inicio optimizado
-CMD ["bash", "-c", "php artisan migrate --force; php artisan config:cache; php artisan view:cache; apache2-foreground"]
+# 11. Comando de inicio optimizado
+CMD ["bash", "-c", "php artisan config:cache && php artisan view:cache && php artisan migrate --force && apache2-foreground"]
 
 EXPOSE 80

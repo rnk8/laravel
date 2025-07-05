@@ -8,21 +8,23 @@ RUN apt-get update && apt-get install -y \
 # Instala Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copia los archivos del proyecto
+# Copia todos los archivos del proyecto
 COPY . /var/www/html/
 
-# Cambia permisos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Establece la raíz del documento en la carpeta public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+
+# Actualiza la configuración de Apache
+RUN sed -ri -e 's!/var/www/html!/var/www/html/public!g' /etc/apache2/sites-available/000-default.conf \
+    && sed -ri -e 's!/var/www/!/var/www/html/public!g' /etc/apache2/apache2.conf
 
 # Habilita mod_rewrite para Laravel
 RUN a2enmod rewrite
 
-# Configura Apache para Laravel (activación de .htaccess)
-RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
+# Ajusta permisos
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
-# Expone puerto
 EXPOSE 80
 
-# Comando por defecto
 CMD ["apache2-foreground"]

@@ -16,6 +16,9 @@ COPY resources/ ./resources/
 # Build production assets
 RUN npm run build
 
+# --- DEBUG: List the contents of the build output ---
+RUN echo "--- Listing files in build stage public directory ---" && ls -laR public
+
 # Stage 2: Production image
 FROM php:8.2-apache
 
@@ -34,8 +37,6 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# 3. Copia archivos de recursos
-COPY resources/ ./resources/
 # 4. Directorio de trabajo
 WORKDIR /var/www/html
 
@@ -51,8 +52,8 @@ COPY . .
 # 8. Copia los assets compilados desde la etapa de construcción
 COPY --from=build /app/public/build /var/www/html/public/build
 
-# 9. Agrega un paso de depuración para verificar los archivos
-RUN ls -laR public
+# 9. --- DEBUG: List the contents of the public directory ---
+RUN echo "--- Listing files in final stage public directory ---" && ls -laR public
 
 # 10. Configura permisos
 RUN chown -R www-data:www-data storage bootstrap/cache public/build && \

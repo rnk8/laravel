@@ -1,56 +1,46 @@
 FROM php:8.2-apache
 
-# 1. Configuración inicial del sistema
+# 1. Configuración inicial
 ENV DEBIAN_FRONTEND=noninteractive
-RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/90render
-
-# 2. Instala dependencias del sistema
 RUN apt-get update && apt-get install -y \
     git curl unzip zip libzip-dev libpq-dev libonig-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# 3. Instala extensiones PHP necesarias
+# 2. Extensiones PHP
 RUN docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath
 
-# 4. Configura Apache
+# 3. Configura Apache
 RUN a2enmod rewrite && \
-    sed -i 's/DocumentRoot \/var\/www\/html/DocumentRoot \/var\/www\/html\/public/' /etc/apache2/sites-available/000-default.conf && \
+    sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|' /etc/apache2/sites-available/000-default.conf && \
     sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf
 
-# 5. Configura Composer
+# 4. Instala Composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# 6. Establece el directorio de trabajo
+# 5. Directorio de trabajo
 WORKDIR /var/www/html
 
-# 7. Copia solo los archivos de composer primero
+# 6. Copia archivos de composer primero
 COPY composer.json composer.lock ./
 
-# 8. Instala dependencias SIN verificar plataforma (para Render)
-RUN composer install --no-interaction --optimize-autoloader --no-scripts --ignore-platform-reqs
+# 7. Instala dependencias (ignorando advertencias de versión)
+RUN composer install --no-interaction --optimize-autoloader --no-scripts --ignore-platform-req=doctrine/dbal
 
-# 9. Copia el resto de los archivos
+# 8. Copia el resto de archivos
 COPY . .
 
-# 10. Configura permisos
+# 9. Permisos
 RUN chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache
 
-# 11. Prepara la aplicación para producción
+# 10. Prepara aplicación
 RUN if [ ! -f .env ]; then \
         cp .env.example .env && \
         php artisan key:generate; \
     fi
 
-# 12. Cache de configuración (solo en producción)
-RUN if [ "$APP_ENV" = "production" ]; then \
-        php artisan config:cache && \
-        php artisan route:cache && \
-        php artisan view:cache; \
-    fi
-
-# 13. Comando para ejecutar migraciones y servir la aplicación
-CMD bash -c "php artisan migrate --force && apache2-foreground"
+# 11. Comando final
+CMD ["bash", "-c", "php artisan migrate --force && apache2-foreground"]
 
 EXPOSE 80

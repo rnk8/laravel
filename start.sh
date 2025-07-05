@@ -1,3 +1,8 @@
 #!/bin/bash
+set -e
+
+# Ejecuta migraciones
 php artisan migrate --force
-apache2-foreground
+
+# Inicia Apache
+exec apache2-foreground

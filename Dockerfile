@@ -8,17 +8,20 @@ RUN apt-get update && apt-get install -y \
 # Habilita mod_rewrite
 RUN a2enmod rewrite
 
+# Configura variables para composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 # Instala Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia archivos necesarios
+# Copia solo los archivos de composer primero
 COPY composer.json composer.lock ./
 
-# Instala dependencias (sin --no-dev para incluir paquetes de desarrollo)
-RUN composer install
+# Instala dependencias
+RUN composer install --no-interaction --optimize-autoloader
 
 # Copia el resto de archivos
 COPY . .

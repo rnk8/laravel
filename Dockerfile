@@ -16,9 +16,6 @@ COPY resources/ ./resources/
 # Build production assets
 RUN npm run build
 
-# --- DEBUG: List the contents of the build output ---
-RUN echo "--- Listing files in build stage public directory ---" && ls -laR public
-
 # Stage 2: Production image
 FROM php:8.2-apache
 
@@ -52,17 +49,14 @@ COPY . .
 # 8. Copia los assets compilados desde la etapa de construcción
 COPY --from=build /app/public/build /var/www/html/public/build
 
-# 9. --- DEBUG: List the contents of the public directory ---
-RUN echo "--- Listing files in final stage public directory ---" && ls -laR public
-
-# 10. Configura permisos
+# 9. Configura permisos
 RUN chown -R www-data:www-data storage bootstrap/cache public/build && \
     chmod -R 775 storage bootstrap/cache public/build
 
-# 11. Prepara la aplicación
+# 10. Prepara la aplicación
 RUN php artisan config:clear && \
     php artisan cache:clear
 
-# 12. Comando de inicio optimizado
+# 11. Comando de inicio optimizado
 CMD ["bash", "-c", "php artisan config:cache && php artisan view:cache && php artisan migrate --force && apache2-foreground"]
 EXPOSE 80

@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: auditoria-laravel
+    runtime: docker
+    env: php
+    buildCommand: "./build.sh"
+    startCommand: "bash start.sh"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:n/xwRGwJjmsQWkM8rIMrgq9icpUgwjAQoFhTu3omKSM=

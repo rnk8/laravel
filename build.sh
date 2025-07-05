@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-# Instala dependencias
-composer install --no-interaction --optimize-autoloader
+# Resuelve dependencias
+composer install --no-interaction --optimize-autoloader --no-dev
 
 # Cache de Laravel
+php artisan config:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

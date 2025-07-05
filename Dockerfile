@@ -51,14 +51,17 @@ COPY . .
 # 8. Copia los assets compilados desde la etapa de construcción
 COPY --from=build /app/public/build /var/www/html/public/build
 
-# 9. Configura permisos
+# 9. Agrega un paso de depuración para verificar los archivos
+RUN ls -laR public
+
+# 10. Configura permisos
 RUN chown -R www-data:www-data storage bootstrap/cache public/build && \
     chmod -R 775 storage bootstrap/cache public/build
 
-# 10. Prepara la aplicación
+# 11. Prepara la aplicación
 RUN php artisan config:clear && \
     php artisan cache:clear
 
-# 11. Comando de inicio optimizado
+# 12. Comando de inicio optimizado
 CMD ["bash", "-c", "php artisan config:cache && php artisan view:cache && php artisan migrate --force && apache2-foreground"]
 EXPOSE 80

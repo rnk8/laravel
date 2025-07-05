@@ -12,7 +12,7 @@
         <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="icon" type="image/x-icon" href="{{ secure_asset('favicon.ico') }}">
 
         <!-- Meta tags para corporativo -->
         <meta name="description" content="Sistema Corporativo Tramontina - Gestión de productos y auditoría">
@@ -56,7 +56,7 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-lg p-1">
-                                <img src="{{ asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
+                                <img src="{{ secure_asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
                             </div>
                             <div>
                                 <span class="font-bold text-xl text-white">Tramontina</span>
@@ -147,7 +147,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div class="flex items-center space-x-3">
                             <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1">
-                                <img src="{{ asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
+                                <img src="{{ secure_asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
                             </div>
                             <div>
                                 <span class="font-bold text-lg">Tramontina</span>

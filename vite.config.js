@@ -6,9 +6,15 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
-                'resources/js/app.js',
+                'resources/js/app.js'
             ],
             refresh: true,
         }),
     ],
+    server: {
+        https: true, // Forza HTTPS en desarrollo
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });

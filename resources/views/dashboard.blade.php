@@ -4,7 +4,7 @@
         <div class="mb-8">
             <div class="flex items-center space-x-4 mb-4">
                 <div class="w-16 h-16 bg-white rounded-xl shadow-lg flex items-center justify-center p-2">
-                    <img src="{{ asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
+                    <img src="{{ secure_asset('logo.png') }}" alt="Tramontina" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>

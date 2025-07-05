@@ -16,7 +16,7 @@
             <div class="absolute inset-0 bg-black bg-opacity-20"></div>
             <div class="relative z-10 flex flex-col justify-center items-center text-white p-12">
                 <div class="text-center max-w-md">
-                <img src="{{ asset('logo.png') }}" class="max-w-xs w-full h-auto mx-auto mb-8">
+                <img src="{{ secure_asset('logo.png') }}" class="max-w-xs w-full h-auto mx-auto mb-8">
                 <h1 class="text-4xl font-bold mb-4">Bienvenido a Tramontina</h1>
                     <p class="text-xl text-blue-100 mb-8">Sistema Corporativo de Gestión</p>
                     <div class="space-y-4 text-blue-100">
@@ -52,7 +52,7 @@
             <div class="w-full max-w-md">
                 <!-- Logo para móviles -->
                 <div class="lg:hidden text-center mb-8">
-                    <img src="{{ asset('logo.png') }}" alt="Tramontina" class="w-20 h-20 mx-auto mb-4">
+                    <img src="{{ secure_asset('logo.png') }}" alt="Tramontina" class="w-20 h-20 mx-auto mb-4">
                     <h1 class="text-2xl font-bold text-gray-900">Tramontina</h1>
                     <p class="text-gray-600">Sistema Corporativo</p>
                 </div>

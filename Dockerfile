@@ -34,6 +34,8 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
 ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# 3. Copia archivos de recursos
+COPY resources/ ./resources/
 # 4. Directorio de trabajo
 WORKDIR /var/www/html
 
@@ -59,5 +61,4 @@ RUN php artisan config:clear && \
 
 # 11. Comando de inicio optimizado
 CMD ["bash", "-c", "php artisan config:cache && php artisan view:cache && php artisan migrate --force && apache2-foreground"]
-
 EXPOSE 80

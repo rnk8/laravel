@@ -12,3 +12,15 @@ services:
         value: false
       - key: APP_KEY
         value: base64:n/xwRGwJjmsQWkM8rIMrgq9icpUgwjAQoFhTu3omKSM=
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: postgresql-auditoria.alwaysdata.net
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_DATABASE
+        value: auditoria_uagrm
+      - key: DB_USERNAME
+        value: auditoria
+      - key: DB_PASSWORD
+        value: controlREMOTO10
